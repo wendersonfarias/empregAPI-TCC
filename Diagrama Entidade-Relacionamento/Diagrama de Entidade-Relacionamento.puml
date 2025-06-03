@@ -1,4 +1,5 @@
 @startuml diagrama_entidade_relacionamento
+!theme united
 ' Configurações visuais para leitura em preto e branco e layout horizontal
 left to right direction
 skinparam class {
@@ -81,19 +82,25 @@ class CANDIDATURA {
   observacoes_empresa : TEXT
 }
 
-' Relacionamentos com notação de pé de galinha
+' Relacionamentos com notação de pé de galinha corrigida
 
-USUARIO ||--o{ CANDIDATO : especializa
-USUARIO ||--o{ EMPRESA : especializa
-USUARIO ||--o{ ADMINISTRADOR : especializa
+USUARIO ||--|| CANDIDATO : especializa
+USUARIO ||--|| EMPRESA : especializa
+USUARIO ||--|| ADMINISTRADOR : especializa
 
-CANDIDATO }o--|| CURRICULO : possui
+CANDIDATO |o--|| CURRICULO : possui
+' Um Candidato possui 0 ou 1 Currículo; um Currículo pertence a 1 Candidato
 
-EMPRESA }o--|{ VAGA : publica
+EMPRESA ||--o{ VAGA : publica
+' Uma Empresa publica 0 ou Muitas Vagas; uma Vaga pertence a 1 Empresa
 
-ADMINISTRADOR }o--o{ VAGA : posta (opcional)
+ADMINISTRADOR ||--o{ VAGA : posta (opcional)
+' Um Administrador posta 0 ou Muitas Vagas; uma Vaga é postada por 0 ou 1 Administrador
 
-CANDIDATO }o--o{ CANDIDATURA : realiza
-VAGA }o--o{ CANDIDATURA : recebe
+CANDIDATO ||--o{ CANDIDATURA : realiza
+' Um Candidato realiza 0 ou Muitas Candidaturas
+
+VAGA ||--o{ CANDIDATURA : recebe
+' Uma Vaga recebe 0 ou Muitas Candidaturas
 
 @enduml
