@@ -63,7 +63,7 @@ public class CandidatoService {
   }
 
   public List<CandidatoResponse> buscarCandidatosPorNome(String nome) {
-    return candidatoRepository.findByNomeContainingIgnoreCase(nome)
+    return candidatoRepository.findByNomeCompletoContainingIgnoreCase(nome)
         .stream()
         .map(this::toResponse)
         .toList();

@@ -6,6 +6,6 @@ import me.wendersonfarias.empregapi.model.Candidato;
 
 public interface CandidatoRepository extends JpaRepository<Candidato, Long> {
 
-  List<Candidato> findByNomeContainingIgnoreCase(String nome);
+  List<Candidato> findByNomeCompletoContainingIgnoreCase(String nome);
 
 }
