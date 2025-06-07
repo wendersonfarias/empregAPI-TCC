@@ -87,6 +87,7 @@ public class CandidatoService {
     Candidato candidato = new Candidato();
     candidato.setNomeCompleto(request.getNomeCompleto());
     candidato.setEmail(request.getEmail());
+    candidato.setSenha(request.getSenha());
     candidato.setTelefone(request.getTelefone());
     candidato.setEndereco(request.getEndereco());
     candidato.setDataNascimento(request.getDataNascimento());

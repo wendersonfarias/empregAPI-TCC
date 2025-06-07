@@ -33,4 +33,7 @@ public class CandidatoRequest {
 
   @NotBlank
   private String habilidades;
+
+  private String senha;
+
 }

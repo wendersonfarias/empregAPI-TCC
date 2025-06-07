@@ -1,5 +1,7 @@
 package me.wendersonfarias.empregapi;
 
+import java.time.LocalDate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -32,6 +34,9 @@ public class EmpregapiApplication implements CommandLineRunner {
 		candidato.setExperienciaProfissional("5 anos em desenvolvimento Java");
 		candidato.setHabilidades("Java, Spring Boot, SQL");
 		candidato.setHabilidades("ler e escrever");
+		candidato.setDataNascimento(LocalDate.of(1990, 1, 1));
+		candidato.setEscolaridade("Ensino Superior Completo");
+		candidato.setSenha("senhaSegura123");
 
 		// Salva o candidato no banco de dados
 		CandidatoResponse candidatoResponse = candidatoService.salvarCandidato(candidato);
