@@ -9,14 +9,19 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import me.wendersonfarias.empregapi.dto.CandidatoRequest;
 import me.wendersonfarias.empregapi.dto.CandidatoResponse;
-import me.wendersonfarias.empregapi.model.Candidato;
+import me.wendersonfarias.empregapi.dto.EmpresaRequest;
+import me.wendersonfarias.empregapi.dto.EmpresaResponse;
 import me.wendersonfarias.empregapi.service.CandidatoService;
+import me.wendersonfarias.empregapi.service.EmpresaService;
 
 @SpringBootApplication
 public class EmpregapiApplication implements CommandLineRunner {
 
 	@Autowired
 	private CandidatoService candidatoService;
+
+	@Autowired
+	private EmpresaService empresaService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(EmpregapiApplication.class, args);
@@ -43,6 +48,19 @@ public class EmpregapiApplication implements CommandLineRunner {
 
 		// Exibe os dados do candidato salvo
 		System.out.println(candidatoResponse.toString());
+
+		EmpresaRequest empresa = new EmpresaRequest();
+		empresa.setNome("Empresa Exemplo");
+		empresa.setCnpj("27865757000102");
+		empresa.setEmail("empresa@email.com");
+		empresa.setSenha("senhaSegura123");
+		empresa.setWebsite("https://www.empresaexemplo.com");
+		empresa.setDescription("Empresa de tecnologia especializada em desenvolvimento de software.");
+
+		// Salva a empresa no banco de dados
+		EmpresaResponse empresaResponse = empresaService.create(empresa);
+		// Exibe os dados da empresa salva
+		System.out.println(empresaResponse.toString());
 
 	}
 }
