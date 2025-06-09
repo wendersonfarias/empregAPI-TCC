@@ -4,14 +4,16 @@ import java.time.LocalDate;
 
 import org.hibernate.validator.constraints.URL;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -47,18 +49,12 @@ public class Empresa {
   @URL(message = "O formato do website é inválido")
   private String website;
 
-  @NotBlank(message = "O e-mail é obrigatório")
-  @Email(message = "O formato do e-mail é inválido")
-  @Column(nullable = false, unique = true)
-  private String email;
-
-  @NotBlank(message = "A senha é obrigatória")
-  @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres")
-  @Column(nullable = false)
-  private String senha;
-
   @Column(name = "data_cadastro", nullable = false)
   private LocalDate dataCadastro;
+
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "usuario_id", referencedColumnName = "id")
+  private Usuario usuario;
 
   @PrePersist
   protected void onCreate() {
