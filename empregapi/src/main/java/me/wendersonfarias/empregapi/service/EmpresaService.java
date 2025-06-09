@@ -2,15 +2,16 @@ package me.wendersonfarias.empregapi.service;
 
 import java.util.List;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import me.wendersonfarias.empregapi.dto.EmpresaRequest;
 import me.wendersonfarias.empregapi.dto.EmpresaResponse;
+import me.wendersonfarias.empregapi.enumeracao.Role;
 import me.wendersonfarias.empregapi.exception.CnpjJaCadastradoException;
 import me.wendersonfarias.empregapi.exception.RecursoNaoEncontradoException;
 import me.wendersonfarias.empregapi.model.Empresa;
+import me.wendersonfarias.empregapi.model.Usuario;
 import me.wendersonfarias.empregapi.repository.EmpresaRepository;
 
 @Service
@@ -18,16 +19,19 @@ import me.wendersonfarias.empregapi.repository.EmpresaRepository;
 public class EmpresaService {
 
   private final EmpresaRepository empresaRepository;
-  private final PasswordEncoder passwordEncoder;
+  private final UsuarioService usuarioService;
 
   public EmpresaResponse create(EmpresaRequest request) {
     this.empresaRepository.findByCnpj(request.getCnpj()).ifPresent(empresa -> {
       throw new CnpjJaCadastradoException("CNPJ já cadastrado: " + request.getCnpj());
     });
 
-    Empresa empresa = toEntity(request);
+    Usuario usuarioCriado = usuarioService.criarUsuario(request.getEmail(), request.getSenha(), Role.ROLE_EMPRESA);
 
-    Empresa empresaSalva = this.empresaRepository.save(empresa);
+    Empresa novaEmpresa = toEntity(request);
+    novaEmpresa.setUsuario(usuarioCriado);
+    Empresa empresaSalva = this.empresaRepository.save(novaEmpresa);
+
     return toResponse(empresaSalva);
   }
 
@@ -44,6 +48,7 @@ public class EmpresaService {
     return toResponse(empresa);
   }
 
+  // 3. MÉTODO ATUALIZAR CORRIGIDO
   public EmpresaResponse atualizarEmpresa(Long id, EmpresaRequest request) {
     Empresa empresa = empresaRepository.findById(id)
         .orElseThrow(() -> new RecursoNaoEncontradoException("Empresa não encontrada com o ID: " + id));
@@ -51,7 +56,6 @@ public class EmpresaService {
     empresa.setNome(request.getNome());
     empresa.setDescription(request.getDescription());
     empresa.setWebsite(request.getWebsite());
-    empresa.setEmail(request.getEmail());
 
     Empresa empresaAtualizada = empresaRepository.save(empresa);
     return toResponse(empresaAtualizada);
@@ -71,7 +75,8 @@ public class EmpresaService {
         empresa.getCnpj(),
         empresa.getDescription(),
         empresa.getWebsite(),
-        empresa.getEmail());
+        empresa.getUsuario().getEmail() // Busca o e-mail a partir do usuário associado
+    );
   }
 
   private Empresa toEntity(EmpresaRequest request) {
@@ -80,8 +85,6 @@ public class EmpresaService {
     empresa.setCnpj(request.getCnpj());
     empresa.setDescription(request.getDescription());
     empresa.setWebsite(request.getWebsite());
-    empresa.setEmail(request.getEmail());
-    empresa.setSenha(passwordEncoder.encode(request.getSenha()));
     return empresa;
   }
 }
