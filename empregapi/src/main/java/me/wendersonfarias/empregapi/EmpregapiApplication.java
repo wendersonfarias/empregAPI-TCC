@@ -1,5 +1,6 @@
 package me.wendersonfarias.empregapi;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +12,13 @@ import me.wendersonfarias.empregapi.dto.CandidatoRequest;
 import me.wendersonfarias.empregapi.dto.CandidatoResponse;
 import me.wendersonfarias.empregapi.dto.EmpresaRequest;
 import me.wendersonfarias.empregapi.dto.EmpresaResponse;
+import me.wendersonfarias.empregapi.dto.VagaRequest;
+import me.wendersonfarias.empregapi.dto.VagaResponse;
+import me.wendersonfarias.empregapi.enumeracao.TipoContratacao;
+import me.wendersonfarias.empregapi.model.Vaga;
 import me.wendersonfarias.empregapi.service.CandidatoService;
 import me.wendersonfarias.empregapi.service.EmpresaService;
+import me.wendersonfarias.empregapi.service.VagaService;
 
 @SpringBootApplication
 public class EmpregapiApplication implements CommandLineRunner {
@@ -22,6 +28,9 @@ public class EmpregapiApplication implements CommandLineRunner {
 
 	@Autowired
 	private EmpresaService empresaService;
+
+	@Autowired
+	private VagaService vagaService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(EmpregapiApplication.class, args);
@@ -62,5 +71,21 @@ public class EmpregapiApplication implements CommandLineRunner {
 		// Exibe os dados da empresa salva
 		System.out.println(empresaResponse.toString());
 
+		VagaRequest vaga = new VagaRequest();
+		vaga.setTitulo("Desenvolvedor Java Pleno");
+		vaga.setDescricao("Desenvolvedor Java Pleno com experiência em Spring Boot e SQL.");
+		vaga.setLocalizacao("São Paulo, SP");
+		vaga.setTipoContratacao(TipoContratacao.CLT);
+		vaga.setEmpresaId(empresaResponse.getId());
+		vaga.setRequisitos("Experiência em Java, Spring Boot e SQL.");
+		vaga.setBeneficios("Vale transporte, vale refeição, plano de saúde.");
+		vaga.setSalario(new BigDecimal("8000.00"));
+
+		// Salva a vaga no banco de dados
+		VagaResponse vagaSalva = vagaService.create(vaga);
+		// Exibe os dados da vaga salva
+		System.out.println(vagaSalva.toString());
+
 	}
+
 }
