@@ -21,6 +21,15 @@ public class ApiExceptionHandler {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
   }
 
+  @ExceptionHandler(CnpjJaCadastradoException.class)
+  public ResponseEntity<Object> handleCnpjJaCadastradoException(CnpjJaCadastradoException ex) {
+    Map<String, Object> body = new HashMap<>();
+    body.put("timestamp", LocalDateTime.now());
+    body.put("status", HttpStatus.BAD_REQUEST.value());
+    body.put("erro", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Object> handleException(Exception ex) {
     Map<String, Object> body = new HashMap<>();
