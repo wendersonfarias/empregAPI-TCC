@@ -1,16 +1,16 @@
 package me.wendersonfarias.empregapi.service;
 
-import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
+
 import me.wendersonfarias.empregapi.dto.CandidatoRequest;
 import me.wendersonfarias.empregapi.dto.CandidatoResponse;
+import me.wendersonfarias.empregapi.enumeracao.Role;
 import me.wendersonfarias.empregapi.exception.RecursoNaoEncontradoException;
 import me.wendersonfarias.empregapi.model.Candidato;
+import me.wendersonfarias.empregapi.model.Usuario;
 import me.wendersonfarias.empregapi.repository.CandidatoRepository;
 
 @Service
@@ -18,7 +18,18 @@ import me.wendersonfarias.empregapi.repository.CandidatoRepository;
 public class CandidatoService {
 
   private final CandidatoRepository candidatoRepository;
-  private final PasswordEncoder passwordEncoder;
+  private final UsuarioService usuarioService;
+
+  public CandidatoResponse salvarCandidato(CandidatoRequest request) {
+
+    Usuario usuarioCriado = usuarioService.criarUsuario(request.getEmail(), request.getSenha(), Role.ROLE_CANDIDATO);
+
+    Candidato novoCandidato = toEntity(request);
+    novoCandidato.setUsuario(usuarioCriado);
+    Candidato candidatoSalvo = candidatoRepository.save(novoCandidato);
+
+    return toResponse(candidatoSalvo);
+  }
 
   public List<CandidatoResponse> listarCandidatos() {
     return candidatoRepository.findAll()
@@ -33,26 +44,11 @@ public class CandidatoService {
     return toResponse(candidato);
   }
 
-  public CandidatoResponse salvarCandidato(CandidatoRequest request) {
-    Candidato candidato = toEntity(request);
-    candidato.setDataCadastro(LocalDate.now());
-    Candidato salvo = candidatoRepository.save(candidato);
-    return toResponse(salvo);
-  }
-
-  public void excluirCandidato(Long id) {
-    if (!candidatoRepository.existsById(id)) {
-      throw new RecursoNaoEncontradoException("Candidato não encontrado");
-    }
-    candidatoRepository.deleteById(id);
-  }
-
   public CandidatoResponse atualizarCandidato(Long id, CandidatoRequest request) {
     Candidato candidato = candidatoRepository.findById(id)
         .orElseThrow(() -> new RecursoNaoEncontradoException("Candidato não encontrado"));
 
     candidato.setNomeCompleto(request.getNomeCompleto());
-    candidato.setEmail(request.getEmail());
     candidato.setTelefone(request.getTelefone());
     candidato.setEndereco(request.getEndereco());
     candidato.setDataNascimento(request.getDataNascimento());
@@ -62,6 +58,13 @@ public class CandidatoService {
 
     Candidato atualizado = candidatoRepository.save(candidato);
     return toResponse(atualizado);
+  }
+
+  public void excluirCandidato(Long id) {
+    if (!candidatoRepository.existsById(id)) {
+      throw new RecursoNaoEncontradoException("Candidato não encontrado");
+    }
+    candidatoRepository.deleteById(id);
   }
 
   public List<CandidatoResponse> buscarCandidatosPorNome(String nome) {
@@ -75,7 +78,7 @@ public class CandidatoService {
     return new CandidatoResponse(
         candidato.getId(),
         candidato.getNomeCompleto(),
-        candidato.getEmail(),
+        candidato.getUsuario().getEmail(),
         candidato.getTelefone(),
         candidato.getEndereco(),
         candidato.getDataNascimento(),
@@ -88,8 +91,6 @@ public class CandidatoService {
   private Candidato toEntity(CandidatoRequest request) {
     Candidato candidato = new Candidato();
     candidato.setNomeCompleto(request.getNomeCompleto());
-    candidato.setEmail(request.getEmail());
-    candidato.setSenha(passwordEncoder.encode(request.getSenha()));
     candidato.setTelefone(request.getTelefone());
     candidato.setEndereco(request.getEndereco());
     candidato.setDataNascimento(request.getDataNascimento());
@@ -98,5 +99,4 @@ public class CandidatoService {
     candidato.setHabilidades(request.getHabilidades());
     return candidato;
   }
-
 }
