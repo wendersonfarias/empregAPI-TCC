@@ -2,6 +2,7 @@ package me.wendersonfarias.empregapi.service;
 
 import java.util.List;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import me.wendersonfarias.empregapi.repository.EmpresaRepository;
 public class EmpresaService {
 
   private final EmpresaRepository empresaRepository;
+  private final PasswordEncoder passwordEncoder;
 
   public EmpresaResponse create(EmpresaRequest request) {
     this.empresaRepository.findByCnpj(request.getCnpj()).ifPresent(empresa -> {
@@ -79,7 +81,7 @@ public class EmpresaService {
     empresa.setDescription(request.getDescription());
     empresa.setWebsite(request.getWebsite());
     empresa.setEmail(request.getEmail());
-    empresa.setSenha(request.getSenha());
+    empresa.setSenha(passwordEncoder.encode(request.getSenha()));
     return empresa;
   }
 }

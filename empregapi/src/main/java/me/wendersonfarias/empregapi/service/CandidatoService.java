@@ -3,6 +3,7 @@ package me.wendersonfarias.empregapi.service;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import me.wendersonfarias.empregapi.repository.CandidatoRepository;
 public class CandidatoService {
 
   private final CandidatoRepository candidatoRepository;
+  private final PasswordEncoder passwordEncoder;
 
   public List<CandidatoResponse> listarCandidatos() {
     return candidatoRepository.findAll()
@@ -87,7 +89,7 @@ public class CandidatoService {
     Candidato candidato = new Candidato();
     candidato.setNomeCompleto(request.getNomeCompleto());
     candidato.setEmail(request.getEmail());
-    candidato.setSenha(request.getSenha());
+    candidato.setSenha(passwordEncoder.encode(request.getSenha()));
     candidato.setTelefone(request.getTelefone());
     candidato.setEndereco(request.getEndereco());
     candidato.setDataNascimento(request.getDataNascimento());
