@@ -23,6 +23,6 @@ public class VagaResponse {
   @Data
   public static class EmpresaSimplificadoDTO {
     private Long id;
-    private String name;
+    private String nome;
   }
 }
