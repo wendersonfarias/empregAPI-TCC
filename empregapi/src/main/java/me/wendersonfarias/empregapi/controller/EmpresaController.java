@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import me.wendersonfarias.empregapi.docs.EmpresaControllerDocs;
 import me.wendersonfarias.empregapi.dto.EmpresaRequest;
 import me.wendersonfarias.empregapi.dto.EmpresaResponse;
 import me.wendersonfarias.empregapi.service.EmpresaService;
@@ -22,7 +23,7 @@ import me.wendersonfarias.empregapi.service.EmpresaService;
 @RestController
 @RequestMapping("/api/empresa")
 @RequiredArgsConstructor
-public class EmpresaController {
+public class EmpresaController implements EmpresaControllerDocs {
 
   private final EmpresaService empresaService;
 
@@ -32,21 +33,25 @@ public class EmpresaController {
     return empresaService.create(request);
   }
 
+  @Override
   @GetMapping
   public List<EmpresaResponse> listarEmpresas() {
     return empresaService.listarEmpresas();
   }
 
+  @Override
   @GetMapping("/{id}")
   public EmpresaResponse buscarEmpresaPorId(@PathVariable Long id) {
     return empresaService.buscarEmpresaPorId(id);
   }
 
+  @Override
   @PutMapping("/{id}")
   public EmpresaResponse atualizarEmpresa(@PathVariable Long id, @RequestBody @Valid EmpresaRequest request) {
     return empresaService.atualizarEmpresa(id, request);
   }
 
+  @Override
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT) // Retorna o status 204 No Content, pois não há corpo na resposta
   public void excluirEmpresa(@PathVariable Long id) {

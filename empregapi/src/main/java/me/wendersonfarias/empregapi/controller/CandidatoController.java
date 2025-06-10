@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import me.wendersonfarias.empregapi.docs.CandidatoControllerDocs;
 import me.wendersonfarias.empregapi.dto.CandidatoRequest;
 import me.wendersonfarias.empregapi.dto.CandidatoResponse;
 import me.wendersonfarias.empregapi.service.CandidatoService;
@@ -22,31 +23,36 @@ import me.wendersonfarias.empregapi.service.CandidatoService;
 @RestController
 @RequestMapping("/api/candidato")
 @RequiredArgsConstructor
-public class CandidatoController {
+public class CandidatoController implements CandidatoControllerDocs {
 
   private final CandidatoService candidatoService;
 
+  @Override
   @GetMapping
   public List<CandidatoResponse> listarCandidatos() {
     return candidatoService.listarCandidatos();
   }
 
+  @Override
   @GetMapping("/{id}")
   public CandidatoResponse buscarCandidatoPorId(@PathVariable Long id) {
     return candidatoService.buscarCandidatoPorId(id);
   }
 
+  @Override
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public CandidatoResponse criarCandidato(@RequestBody @Valid CandidatoRequest request) {
     return candidatoService.salvarCandidato(request);
   }
 
+  @Override
   @PutMapping("/{id}")
   public CandidatoResponse atualizarCandidato(@PathVariable Long id, @RequestBody @Valid CandidatoRequest request) {
     return candidatoService.atualizarCandidato(id, request);
   }
 
+  @Override
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void excluirCandidato(@PathVariable Long id) {
