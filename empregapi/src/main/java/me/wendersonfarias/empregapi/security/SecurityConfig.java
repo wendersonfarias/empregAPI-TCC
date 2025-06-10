@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+  // Suas dependências injetadas
   private final JwtAuthenticationFilter jwtAuthFilter;
   private final UserDetailsService userDetailsService;
 
@@ -33,14 +34,23 @@ public class SecurityConfig {
     http
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
-            // Endpoints Públicos
+            // 1. ENDPOINTS PÚBLICOS
+            .requestMatchers(
+                "/api/auth/**", // Libera /api/auth/login e futuros endpoints de autenticação
+                "/v3/api-docs/**", // Libera a documentação OpenAPI em formato JSON
+                "/swagger-ui.html", // Libera a página principal do Swagger
+                "/swagger-ui/**", // Libera os recursos da interface web do Swagger
+                "/swagger-resources/**",
+                "/webjars/**")
+            .permitAll()
+
+            // Endpoints de cadastro continuam públicos
             .requestMatchers(HttpMethod.POST, "/api/candidato").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/empresa").permitAll()
-            .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-            // Proteger Endpoints
-            .requestMatchers("/api/admin/**").hasRole("ADMIN")
-            .requestMatchers(HttpMethod.POST, "/api/vagas").hasAnyRole("EMPRESA", "ADMIN")
+
+            // 2. ENDPOINTS PROTEGIDOS (Qualquer outra requisição)
             .anyRequest().authenticated())
+        // Configuração para API Stateless com JWT
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authenticationProvider(authenticationProvider())
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
@@ -48,6 +58,7 @@ public class SecurityConfig {
     return http.build();
   }
 
+  // Seus outros beans de configuração continuam aqui
   @Bean
   public AuthenticationProvider authenticationProvider() {
     DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
