@@ -62,6 +62,15 @@ public class ApiExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
   }
 
+  @ExceptionHandler(InscricaoJaRealizadaException.class)
+  public ResponseEntity<Object> handleInscricaoJaRealizada(InscricaoJaRealizadaException ex) {
+    Map<String, Object> body = new HashMap<>();
+    body.put("timestamp", LocalDateTime.now());
+    body.put("status", HttpStatus.CONFLICT.value());
+    body.put("erro", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Object> handleException(Exception ex) {
     Map<String, Object> body = new HashMap<>();
