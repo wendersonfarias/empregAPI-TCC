@@ -3,6 +3,10 @@ package me.wendersonfarias.empregapi.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +21,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.wendersonfarias.empregapi.dto.VagaResponse;
 import me.wendersonfarias.empregapi.dto.VagaRequest;
+import me.wendersonfarias.empregapi.service.InscricaoService;
 import me.wendersonfarias.empregapi.service.VagaService;
 
 @RestController
@@ -25,6 +30,7 @@ import me.wendersonfarias.empregapi.service.VagaService;
 public class VagaController {
 
   private final VagaService vagaService;
+  private final InscricaoService inscricaoService;
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
@@ -51,5 +57,18 @@ public class VagaController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void excluirVaga(@PathVariable Long id) {
     vagaService.excluir(id);
+  }
+
+  @PostMapping("/{id}/inscrever")
+  @PreAuthorize("hasRole('CANDIDATO')")
+  public ResponseEntity<Void> inscreverEmVaga(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+
+    if (userDetails == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    inscricaoService.inscrever(id, userDetails.getUsername());
+
+    return ResponseEntity.ok().build();
   }
 }
