@@ -35,6 +35,7 @@ public class SecurityConfig {
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
             // 1. ENDPOINTS PÚBLICOS
+            .requestMatchers("/").permitAll()
             .requestMatchers(
                 "/api/auth/**", // Libera /api/auth/login e futuros endpoints de autenticação
                 "/v3/api-docs/**", // Libera a documentação OpenAPI em formato JSON
