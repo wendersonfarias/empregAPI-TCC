@@ -1,8 +1,12 @@
 package me.wendersonfarias.empregapi.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import me.wendersonfarias.empregapi.dto.InscricaoDetalhesDTO;
 import me.wendersonfarias.empregapi.enumeracao.StatusVaga;
 import me.wendersonfarias.empregapi.exception.InscricaoJaRealizadaException;
 import me.wendersonfarias.empregapi.exception.RecursoNaoEncontradoException;
@@ -50,4 +54,39 @@ public class InscricaoService {
 
     inscricaoRepository.save(novaInscricao);
   }
+
+  public List<InscricaoDetalhesDTO> listarInscricoesPorVaga(Long vagaId, String emailEmpresaLogada) {
+    Vaga vaga = vagaRepository.findById(vagaId)
+        .orElseThrow(() -> new RecursoNaoEncontradoException("Vaga não encontrada"));
+
+    if (!vaga.getEmpresa().getUsuario().getEmail().equals(emailEmpresaLogada)) {
+      throw new org.springframework.security.access.AccessDeniedException(
+          "Acesso negado: esta vaga não pertence à sua empresa.");
+    }
+
+    return inscricaoRepository.findByVagaId(vagaId)
+        .stream()
+        .map(this::toDetalhesDTO)
+        .collect(Collectors.toList());
+  }
+
+  private InscricaoDetalhesDTO toDetalhesDTO(Inscricao inscricao) {
+    InscricaoDetalhesDTO dto = new InscricaoDetalhesDTO();
+    dto.setNumeroInscricao(inscricao.getId());
+    dto.setDataInscricao(inscricao.getDataInscricao());
+    dto.setStatus(inscricao.getStatus());
+
+    InscricaoDetalhesDTO.CandidatoSimplificadoDTO candidatoDTO = new InscricaoDetalhesDTO.CandidatoSimplificadoDTO();
+    candidatoDTO.setId(inscricao.getCandidato().getId());
+    candidatoDTO.setNomeCompleto(inscricao.getCandidato().getNomeCompleto());
+    candidatoDTO.setEmail(inscricao.getCandidato().getUsuario().getEmail());
+    candidatoDTO.setTelefone(inscricao.getCandidato().getTelefone());
+    candidatoDTO.setHabilidades(inscricao.getCandidato().getHabilidades());
+    candidatoDTO.setExperienciaProfissional(inscricao.getCandidato().getExperienciaProfissional());
+    candidatoDTO.setEscolaridade(inscricao.getCandidato().getEscolaridade());
+
+    dto.setCandidato(candidatoDTO);
+    return dto;
+  }
+
 }
