@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.wendersonfarias.empregapi.dto.VagaResponse;
+import me.wendersonfarias.empregapi.dto.InscricaoDetalhesDTO;
 import me.wendersonfarias.empregapi.dto.VagaRequest;
 import me.wendersonfarias.empregapi.service.InscricaoService;
 import me.wendersonfarias.empregapi.service.VagaService;
@@ -70,5 +71,13 @@ public class VagaController {
     inscricaoService.inscrever(id, userDetails.getUsername());
 
     return ResponseEntity.ok().build();
+  }
+
+  @GetMapping("/{id}/inscricoes")
+  @PreAuthorize("hasRole('EMPRESA')")
+  public ResponseEntity<List<InscricaoDetalhesDTO>> getInscricoesDaVaga(@PathVariable Long id,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    List<InscricaoDetalhesDTO> inscricoes = inscricaoService.listarInscricoesPorVaga(id, userDetails.getUsername());
+    return ResponseEntity.ok(inscricoes);
   }
 }

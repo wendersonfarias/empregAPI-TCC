@@ -1,5 +1,6 @@
 package me.wendersonfarias.empregapi.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,6 @@ import me.wendersonfarias.empregapi.model.Inscricao;
 public interface InscricaoRepository extends JpaRepository<Inscricao, Long> {
 
   Optional<Inscricao> findByCandidatoIdAndVagaId(Long candidatoId, Long vagaId);
+
+  List<Inscricao> findByVagaId(Long vagaId);
 }
