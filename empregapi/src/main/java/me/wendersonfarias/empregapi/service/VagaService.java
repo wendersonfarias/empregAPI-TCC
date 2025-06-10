@@ -87,7 +87,7 @@ public class VagaService {
 
     EmpresaSimplificadoDTO empresaDTO = new EmpresaSimplificadoDTO();
     empresaDTO.setId(vaga.getEmpresa().getId());
-    empresaDTO.setName(vaga.getEmpresa().getNome());
+    empresaDTO.setNome(vaga.getEmpresa().getNome());
     response.setEmpresa(empresaDTO);
 
     return response;
