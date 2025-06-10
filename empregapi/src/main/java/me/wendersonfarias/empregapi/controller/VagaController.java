@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.wendersonfarias.empregapi.dto.VagaResponse;
+import me.wendersonfarias.empregapi.docs.VagaControllerDocs;
 import me.wendersonfarias.empregapi.dto.InscricaoDetalhesDTO;
 import me.wendersonfarias.empregapi.dto.VagaRequest;
 import me.wendersonfarias.empregapi.service.InscricaoService;
@@ -28,38 +29,44 @@ import me.wendersonfarias.empregapi.service.VagaService;
 @RestController
 @RequestMapping("/api/vagas")
 @RequiredArgsConstructor
-public class VagaController {
+public class VagaController implements VagaControllerDocs {
 
   private final VagaService vagaService;
   private final InscricaoService inscricaoService;
 
+  @Override
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public VagaResponse criarVaga(@Valid @RequestBody VagaRequest requestDTO) {
     return vagaService.create(requestDTO);
   }
 
+  @Override
   @GetMapping
   public List<VagaResponse> listarTodasVagas() {
     return vagaService.listarTodas();
   }
 
+  @Override
   @GetMapping("/{id}")
   public VagaResponse buscarVagaPorId(@PathVariable Long id) {
     return vagaService.buscarPorId(id);
   }
 
+  @Override
   @PutMapping("/{id}")
   public VagaResponse atualizarVaga(@PathVariable Long id, @Valid @RequestBody VagaRequest requestDTO) {
     return vagaService.atualizar(id, requestDTO);
   }
 
+  @Override
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void excluirVaga(@PathVariable Long id) {
     vagaService.excluir(id);
   }
 
+  @Override
   @PostMapping("/{id}/inscrever")
   @PreAuthorize("hasRole('CANDIDATO')")
   public ResponseEntity<Void> inscreverEmVaga(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
@@ -73,6 +80,7 @@ public class VagaController {
     return ResponseEntity.ok().build();
   }
 
+  @Override
   @GetMapping("/{id}/inscricoes")
   @PreAuthorize("hasRole('EMPRESA')")
   public ResponseEntity<List<InscricaoDetalhesDTO>> getInscricoesDaVaga(@PathVariable Long id,
