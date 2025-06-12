@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.wendersonfarias.empregapi.dto.EmpresaRequest;
 import me.wendersonfarias.empregapi.dto.EmpresaResponse;
@@ -21,6 +22,7 @@ public class EmpresaService {
   private final EmpresaRepository empresaRepository;
   private final UsuarioService usuarioService;
 
+  @Transactional
   public EmpresaResponse create(EmpresaRequest request) {
     this.empresaRepository.findByCnpj(request.getCnpj()).ifPresent(empresa -> {
       throw new CnpjJaCadastradoException("CNPJ já cadastrado: " + request.getCnpj());

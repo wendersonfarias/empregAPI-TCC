@@ -3,8 +3,9 @@ package me.wendersonfarias.empregapi.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-import lombok.RequiredArgsConstructor;
 
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import me.wendersonfarias.empregapi.dto.CandidatoRequest;
 import me.wendersonfarias.empregapi.dto.CandidatoResponse;
 import me.wendersonfarias.empregapi.enumeracao.Role;
@@ -20,6 +21,7 @@ public class CandidatoService {
   private final CandidatoRepository candidatoRepository;
   private final UsuarioService usuarioService;
 
+  @Transactional
   public CandidatoResponse salvarCandidato(CandidatoRequest request) {
 
     Usuario usuarioCriado = usuarioService.criarUsuario(request.getEmail(), request.getSenha(), Role.ROLE_CANDIDATO);
