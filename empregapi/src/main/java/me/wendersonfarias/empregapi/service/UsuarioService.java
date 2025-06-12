@@ -27,6 +27,6 @@ public class UsuarioService {
     novoUsuario.setSenha(passwordEncoder.encode(senha));
     novoUsuario.setRole(role);
 
-    return novoUsuario;
+    return usuarioRepository.save(novoUsuario);
   }
 }
