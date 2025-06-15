@@ -4,10 +4,14 @@ import java.math.BigDecimal;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import me.wendersonfarias.empregapi.enumeracao.TipoContratacao;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class VagaRequest {
 
   @NotBlank(message = "O título é obrigatório")
