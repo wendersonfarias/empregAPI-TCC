@@ -3,8 +3,8 @@ package me.wendersonfarias.empregapi.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.wendersonfarias.empregapi.dto.EmpresaRequest;
 import me.wendersonfarias.empregapi.dto.EmpresaResponse;

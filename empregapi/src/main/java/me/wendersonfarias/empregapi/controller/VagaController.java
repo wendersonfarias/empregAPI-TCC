@@ -82,7 +82,7 @@ public class VagaController implements VagaControllerDocs {
 
   @Override
   @GetMapping("/{id}/inscricoes")
-  @PreAuthorize("hasRole('EMPRESA')")
+  @PreAuthorize("hasRole('EMPRESA') or hasRole('ADMIN')")
   public ResponseEntity<List<InscricaoDetalhesDTO>> getInscricoesDaVaga(@PathVariable Long id,
       @AuthenticationPrincipal UserDetails userDetails) {
     List<InscricaoDetalhesDTO> inscricoes = inscricaoService.listarInscricoesPorVaga(id, userDetails.getUsername());

@@ -34,7 +34,7 @@ public class SecurityConfig {
     http
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
-            // 1. ENDPOINTS PÚBLICOS
+            // ENDPOINTS PÚBLICOS
             .requestMatchers("/").permitAll()
             .requestMatchers(
                 "/api/auth/**", // Libera /api/auth/login e futuros endpoints de autenticação
@@ -48,8 +48,9 @@ public class SecurityConfig {
             // Endpoints de cadastro continuam públicos
             .requestMatchers(HttpMethod.POST, "/api/candidato").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/empresa").permitAll()
+            .requestMatchers(HttpMethod.GET, "api/vagas").permitAll()
 
-            // 2. ENDPOINTS PROTEGIDOS (Qualquer outra requisição)
+            // ENDPOINTS PROTEGIDOS
             .anyRequest().authenticated())
         // Configuração para API Stateless com JWT
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -59,7 +60,6 @@ public class SecurityConfig {
     return http.build();
   }
 
-  // Seus outros beans de configuração continuam aqui
   @Bean
   public AuthenticationProvider authenticationProvider() {
     DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();

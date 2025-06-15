@@ -27,6 +27,7 @@ public class EmpresaController implements EmpresaControllerDocs {
 
   private final EmpresaService empresaService;
 
+  @Override
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public EmpresaResponse criarEmpresa(@RequestBody @Valid EmpresaRequest request) {
@@ -53,7 +54,7 @@ public class EmpresaController implements EmpresaControllerDocs {
 
   @Override
   @DeleteMapping("/{id}")
-  @ResponseStatus(HttpStatus.NO_CONTENT) // Retorna o status 204 No Content, pois não há corpo na resposta
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   public void excluirEmpresa(@PathVariable Long id) {
     empresaService.excluirEmpresa(id);
   }
