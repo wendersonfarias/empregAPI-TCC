@@ -3,9 +3,14 @@ package me.wendersonfarias.empregapi.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import me.wendersonfarias.empregapi.validacao.CNPJValido;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class EmpresaRequest {
 
   @NotBlank(message = "O nome da empresa é obrigatório.")
@@ -13,6 +18,7 @@ public class EmpresaRequest {
 
   @NotBlank(message = "O CNPJ da empresa é obrigatório.")
   @Size(min = 14, max = 14, message = "O CNPJ deve conter 14 dígitos.")
+  @CNPJValido
   private String cnpj;
 
   private String description;
