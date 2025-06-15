@@ -2,11 +2,16 @@ package me.wendersonfarias.empregapi.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import me.wendersonfarias.empregapi.enumeracao.StatusVaga;
 import me.wendersonfarias.empregapi.enumeracao.TipoContratacao;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class VagaResponse {
   private Long id;
   private String titulo;
