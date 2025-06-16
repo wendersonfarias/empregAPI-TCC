@@ -56,7 +56,7 @@ public class EmpresaService {
         .orElseThrow(() -> new RecursoNaoEncontradoException("Empresa não encontrada com o ID: " + id));
 
     empresa.setNome(request.getNome());
-    empresa.setDescription(request.getDescription());
+    empresa.setDescricao(request.getDescricao());
     empresa.setWebsite(request.getWebsite());
 
     Empresa empresaAtualizada = empresaRepository.save(empresa);
@@ -75,7 +75,7 @@ public class EmpresaService {
         empresa.getId(),
         empresa.getNome(),
         empresa.getCnpj(),
-        empresa.getDescription(),
+        empresa.getDescricao(),
         empresa.getWebsite(),
         empresa.getUsuario().getEmail() // Busca o e-mail a partir do usuário associado
     );
@@ -85,7 +85,7 @@ public class EmpresaService {
     Empresa empresa = new Empresa();
     empresa.setNome(request.getNome());
     empresa.setCnpj(request.getCnpj());
-    empresa.setDescription(request.getDescription());
+    empresa.setDescricao(request.getDescricao());
     empresa.setWebsite(request.getWebsite());
     return empresa;
   }

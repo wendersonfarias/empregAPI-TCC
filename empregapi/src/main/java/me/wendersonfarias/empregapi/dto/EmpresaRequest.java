@@ -21,7 +21,7 @@ public class EmpresaRequest {
   @CNPJValido
   private String cnpj;
 
-  private String description;
+  private String descricao;
 
   private String website;
 

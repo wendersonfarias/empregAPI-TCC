@@ -44,7 +44,7 @@ public class Empresa {
 
   @Size(max = 1000, message = "A descrição deve ter no máximo 1000 caracteres")
   @Column(columnDefinition = "TEXT")
-  private String description;
+  private String descricao;
 
   @URL(message = "O formato do website é inválido")
   private String website;

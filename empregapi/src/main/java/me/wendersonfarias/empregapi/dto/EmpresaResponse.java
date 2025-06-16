@@ -12,7 +12,7 @@ public class EmpresaResponse {
   private Long id;
   private String nome;
   private String cnpj;
-  private String description;
+  private String descricao;
   private String website;
   private String email;
 }
