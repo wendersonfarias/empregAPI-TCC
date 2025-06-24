@@ -5,40 +5,16 @@ left to right direction
 actor Candidato
 
 rectangle "Plataforma de Emprego" {
-    usecase "Realizar Login" as UC_Login
-    usecase "Gerenciar Perfil Pessoal" as UC_ManageProfile
-    usecase "Gerenciar Currículo" as UC_ManageResume
+    usecase "Manter Perfil Pessoal" as UC_ManageProfile
+  
     usecase "Buscar Vagas" as UC_SearchVacancies
-    usecase "Visualizar Detalhes da Vaga" as UC_ViewDetails
-    usecase "Candidatar-se a uma Vaga" as UC_ApplyVacancy
-    usecase "Gerenciar Minhas Candidaturas" as UC_ManageApplications
-    usecase "Realizar Logout" as UC_Logout
-    usecase "Autenticar Usuário" as UC_Auth
-    usecase "Validar Dados do Formulário" as UC_ValidateForm
-    usecase "Selecionar/Confirmar Currículo" as UC_SelectResume
-    usecase "Aplicar filtros de busca" as UC_filtros
+    usecase "Manter Candidaturas" as UC_ManageApplications
+ 
 
 }
 
-Candidato --> UC_Login
 Candidato --> UC_ManageProfile
-Candidato --> UC_ManageResume
 Candidato --> UC_SearchVacancies
-Candidato --> UC_ViewDetails
-Candidato --> UC_ApplyVacancy
 Candidato --> UC_ManageApplications
-Candidato --> UC_Logout
-
-UC_Login ..> UC_Auth : <<include>>
-
-
-UC_ManageProfile ..> UC_ValidateForm : <<include>>
-UC_SearchVacancies <.. UC_filtros: <<extends>>
-
-
-UC_ManageResume ..> UC_ValidateForm : <<include>>
-
-UC_ApplyVacancy ..> UC_SelectResume : <<include>>
-
 
 @enduml
