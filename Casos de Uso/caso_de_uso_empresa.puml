@@ -5,26 +5,15 @@ left to right direction
 actor Empresa
 
 rectangle "Plataforma de Emprego" {
-    usecase "Realizar Login" as UC_Login
-    usecase "Gerenciar Perfil da Empresa" as UC_ManageProfile
-    usecase "Gerenciar Vagas" as UC_ManageVacancies
-    usecase "Gerenciar Candidaturas das Vagas" as UC_ManageApplications
-    usecase "Realizar Logout" as UC_Logout
-    usecase "Autenticar Usuário" as UC_Auth
-    usecase "Validar Dados do Formulário" as UC_ValidateForm
+  
+    usecase "Manter Perfil" as UC_ManageProfile
+    usecase "Manter Vagas" as UC_ManageVacancies
+    usecase "Manter Candidaturas das Vagas" as UC_ManageApplications
+   
 }
 
-Empresa --> UC_Login
 Empresa --> UC_ManageProfile
 Empresa --> UC_ManageVacancies
 Empresa --> UC_ManageApplications
-Empresa --> UC_Logout
-
-
-UC_ManageProfile ..> UC_ValidateForm : <<include>>
-
-UC_ManageVacancies ..> UC_ValidateForm : <<include>>
-
-UC_Login ..> UC_Auth: <<include>>
 
 @enduml

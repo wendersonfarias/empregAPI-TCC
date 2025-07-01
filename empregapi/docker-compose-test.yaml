@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  # Serviço de banco de dados exclusivo para os testes
+  postgres-test:
+    image: postgres:13-alpine
+    container_name: empregapi-db-test
+    environment:
+      # Credenciais que batem com 'application-test.properties'
+      POSTGRES_DB: empregapi-test
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpass
+    ports:
+      # Expõe em uma porta diferente (5433) para não conflitar com o banco de dev
+      - '5433:5432'
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U testuser -d empregapi-test" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5

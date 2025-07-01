@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Serviço de banco de dados para desenvolvimento
+  postgres:
+    image: postgres:13-alpine
+    container_name: empregapi-db-dev
+    environment:
+      POSTGRES_DB: empregapi
+      POSTGRES_USER: wenderson
+      POSTGRES_PASSWORD: empregapi
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U wenderson -d empregapi" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  empregapi-app:
+    build: . # Constrói a imagem a partir do Dockerfile
+    container_name: empregapi-app-dev
+    ports:
+      - "8080:8080"
+    # Garante que a aplicação só vai iniciar depois que o banco estiver saudável
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # Define as variáveis de ambiente para o contêiner da aplicação
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      spring.datasource.url: jdbc:postgresql://postgres:5432/empregapi
+      spring.datasource.username: wenderson
+      spring.datasource.password: empregapi
+      spring.jpa.hibernate.ddl-auto: update
+      jwt.secret: OLA_MUNDO_CHAVE_JWT_TCC_WENDERSON_2025
+      jwt.expiration: 3600
+    restart: on-failure
+
+volumes:
+  postgres_data:

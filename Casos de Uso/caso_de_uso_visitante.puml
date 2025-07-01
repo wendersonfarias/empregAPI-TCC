@@ -6,19 +6,15 @@ actor Visitante
 
 rectangle "Plataforma de Emprego" {
     usecase "Visualizar Vagas em Aberto" as UC_ViewVacancies
-    usecase "Visualizar Detalhes da Vaga" as UC_ViewDetails
+
     usecase "Realizar Cadastro como Candidato" as UC_RegisterCandidate
     usecase "Realizar Cadastro como Empresa" as UC_RegisterCompany
-    usecase "Aplicar filtros básicos de busca" as UC_filtros
-    usecase "Validar Dados do Formulário" as UC_ValidateForm
+   
 }
 
 Visitante --> UC_ViewVacancies
-Visitante --> UC_ViewDetails
 Visitante --> UC_RegisterCandidate
 Visitante --> UC_RegisterCompany
 
-UC_ViewVacancies <.. UC_filtros : <<extends>>
-UC_RegisterCandidate ..> UC_ValidateForm : <<include>>
-UC_RegisterCompany ..> UC_ValidateForm : <<include>>
+
 @enduml
