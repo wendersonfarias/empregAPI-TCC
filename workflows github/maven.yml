@@ -1,0 +1,39 @@
+name: Testes e Compilação Java
+
+on:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar código do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+          cache: maven
+
+      - name: Etapa 1 - Executar os testes
+        run: mvn -B test -Dspring.profiles.active=test
+        working-directory: empregapi
+
+      - name: Etapa 2 - Empacotar o projeto
+        run: mvn -B package -DskipTests -Dspring.profiles.active=test
+        working-directory: empregapi
+
+      - name: Etapa 3 - Fazer upload do artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: programa
+          path: empregapi/target/*.jar
+
+  deploy-ec2:
+    needs: build
+    uses: ./.github/workflows/entrega-continua.yml
+    secrets: inherit

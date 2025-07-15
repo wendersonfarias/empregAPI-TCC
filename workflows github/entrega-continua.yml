@@ -1,0 +1,102 @@
+name: Entrega Continua
+
+on:
+  workflow_call:
+
+# Define os jobs a serem executados
+jobs:
+  AWS:
+    # O tipo de máquina virtual para rodar o job
+    runs-on: ubuntu-latest
+
+    # Sequência de passos que compõem o job
+    steps:
+      # 1. Baixa o código do seu repositório para a máquina do GitHub Actions
+      - name: Baixar código do repositório
+        uses: actions/checkout@v4
+
+      # 2. Baixa o artefato .jar compilado em um job anterior
+      - name: Download do Artefato Java
+        uses: actions/download-artifact@v4
+        with:
+          name: programa
+          path: ./
+
+      # 3. Faz o deploy para a máquina EC2 via SSH e executa os comandos
+      - name: Deploy na EC2
+        uses: easingthemes/ssh-deploy@main
+        with:
+          # --- Credenciais para conexão SSH ---
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_AWS }}
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST_AWS }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER_AWS }}
+
+          # --- Diretório de destino na máquina remota ---
+          TARGET: /home/${{ secrets.REMOTE_USER_AWS }}
+
+          # --- Script a ser executado na máquina EC2 após o deploy ---
+          SCRIPT_AFTER: |
+            # Navega para o diretório de destino
+            cd /home/${{ secrets.REMOTE_USER_AWS }}
+
+            # Garante que o Java (Amazon Corretto 21) esteja instalado
+            if ! java -version &>/dev/null; then
+              echo "Java não encontrado. Instalando Amazon Corretto 21..."
+              sudo amazon-linux-extras enable corretto21
+              sudo yum install -y java-21-amazon-corretto
+            else
+              echo "Java já está instalado."
+            fi
+
+            # Para qualquer processo antigo da aplicação para evitar conflitos
+            echo "Parando app atual se estiver rodando..."
+            pkill -f 'java -jar app.jar' || true
+
+            # Renomeia o artefato .jar para um nome padrão e fácil de usar
+            echo "Renomeando .jar para app.jar"
+            mv empregapi-*.jar app.jar
+
+            # Cria o script 'run_app.sh' que vai iniciar a aplicação
+            echo "Criando script run_app.sh com variáveis de ambiente"
+            cat << 'EOF' > run_app.sh
+            #!/bin/bash
+
+            # (Opcional) Bloco para depuração: imprime no log se as variáveis foram recebidas
+            echo "--- Variáveis recebidas pelo script ---"
+            echo "SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}"
+            echo "DB_URL_PROD IS_SET: [${DB_URL_PROD:+true}]"
+            echo "DB_USER_PROD IS_SET: [${DB_USER_PROD:+true}]"
+            echo "JWT_SECRET_PROD IS_SET: [${JWT_SECRET_PROD:+true}]"
+            echo "----------------------------------------"
+
+            # Exporta as variáveis para o ambiente da aplicação Java
+            export DB_URL_PROD="${DB_URL_PROD}"
+            export DB_USER_PROD="${DB_USER_PROD}"
+            export DB_PASS_PROD="${DB_PASS_PROD}"
+            # Ajuste Principal 1: Mapeia o nome do secret para o nome que o Spring Boot espera
+            export JWT_SECRET="${JWT_SECRET_PROD}"
+            export JWT_EXPIRATION="${JWT_EXPIRATION}"
+            export SPRING_PROFILES_ACTIVE="${SPRING_PROFILES_ACTIVE}"
+            export SPRING_JPA_HIBERNATE_DDL_AUTO="${SPRING_JPA_HIBERNATE_DDL_AUTO}"
+
+            # Inicia a aplicação em background, redirecionando logs
+            nohup java -jar app.jar > nohup.out 2> nohup.err < /dev/null &
+            EOF
+
+            # Torna o script recém-criado executável
+            chmod +x run_app.sh
+
+            # Ajuste Principal 2: Executa o script injetando os secrets do GitHub como variáveis de ambiente
+            # Esta é a correção mais crítica para garantir que os valores sejam passados
+            echo "Executando aplicação e injetando variáveis de ambiente..."
+            DB_URL_PROD='${{ secrets.DB_URL_PROD }}' \
+            DB_USER_PROD='${{ secrets.DB_USER_PROD }}' \
+            DB_PASS_PROD='${{ secrets.DB_PASS_PROD }}' \
+            JWT_SECRET_PROD='${{ secrets.JWT_SECRET_PROD }}' \
+            JWT_EXPIRATION='${{ secrets.JWT_EXPIRATION }}' \
+            SPRING_PROFILES_ACTIVE='${{ secrets.SPRING_PROFILES_ACTIVE }}' \
+            SPRING_JPA_HIBERNATE_DDL_AUTO='${{ secrets.SPRING_JPA_HIBERNATE_DDL_AUTO }}' \
+            nohup ./run_app.sh > /dev/null 2>&1 &
+
+            echo "Deploy finalizado. Aplicação iniciando em background."
+            echo "Verifique os logs 'nohup.out' e 'nohup.err' no servidor para confirmar o status."
