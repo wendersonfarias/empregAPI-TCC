@@ -1,0 +1,25 @@
+docker_build:
+  stage: docker_build
+  image: docker:latest
+  variables:
+    DOCKER_HOST: ""
+  script:
+    - echo "🔐 Login no Docker Hub"
+    - echo "$TOKEN_DOCKER_HUB" | docker login -u "wendersonf" --password-stdin
+    - echo "🚧 Criando builder com Docker Buildx"
+    - docker buildx create --use
+    - echo "🐳 Build e push da imagem Docker"
+    - |
+      docker buildx build \
+        --push \
+        --file empregapi/Dockerfile \
+        --build-arg JAR_FILE=empregapi/target/empregapi-0.0.1-SNAPSHOT.jar \
+        --cache-from=type=registry,ref=wendersonf/empregapi:cache \
+        --cache-to=type=registry,ref=wendersonf/empregapi:cache,mode=max \
+        --tag wendersonf/empregapi:latest \
+        empregapi
+  needs:
+    - job: construir_pacote
+      artifacts: true
+  only:
+    - main

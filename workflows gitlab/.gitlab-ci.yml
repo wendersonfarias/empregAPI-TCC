@@ -1,0 +1,33 @@
+include:
+  - local: '.gitlab-ci-docker.yml'
+
+stages:
+  - test
+  - build
+  - docker_build
+
+image: maven:3.9.6-eclipse-temurin-21
+
+cache:
+  key: maven-repo-cache
+  paths:
+    - .m2/repository/
+
+executar_testes:
+  stage: test
+  script:
+    - echo "Iniciando a execução dos testes..."
+    - cd empregapi
+    - mvn -B test -Dspring.profiles.active=test
+
+construir_pacote:
+  stage: build
+  script:
+    - echo "Iniciando a compilação do pacote .jar..."
+    - cd empregapi
+    - mvn -B package -DskipTests
+  artifacts:
+    name: "API-TCC-WENDERSON"
+    paths:
+      - empregapi/target/*.jar
+    expire_in: 1 week
