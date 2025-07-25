@@ -58,5 +58,6 @@ public interface CandidatoControllerDocs {
             @ApiResponse(responseCode = "404", description = "Candidato não encontrado")
     })
     @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasRole('ADMIN')")
     void excluirCandidato(@PathVariable Long id);
 }
