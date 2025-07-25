@@ -57,6 +57,7 @@ public interface VagaControllerDocs {
         VagaResponse atualizarVaga(@PathVariable Long id, @Valid @RequestBody VagaRequest requestDTO);
 
         @Operation(summary = "Excluir uma vaga", description = "Exclui uma vaga existente. Requer autenticação de EMPRESA ou ADMIN que seja dona da vaga.")
+        @PreAuthorize("hasRole('EMPRESA') or hasRole('ADMIN')")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "204", description = "Vaga excluída com sucesso"),
                         @ApiResponse(responseCode = "403", description = "Acesso negado"),
