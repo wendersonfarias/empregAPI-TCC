@@ -55,5 +55,6 @@ public interface EmpresaControllerDocs {
       @ApiResponse(responseCode = "404", description = "Empresa não encontrada")
   })
   @SecurityRequirement(name = "bearerAuth")
+  @PreAuthorize("hasRole('ADMIN')")
   void excluirEmpresa(@PathVariable Long id);
 }
