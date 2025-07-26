@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import me.wendersonfarias.empregapi.dto.EmpresaRequest;
 import me.wendersonfarias.empregapi.dto.EmpresaResponse;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @Tag(name = "Empresas", description = "Endpoints para gerenciamento de empresas")
 public interface EmpresaControllerDocs {
